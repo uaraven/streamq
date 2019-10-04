@@ -1,9 +1,10 @@
 # StreamQ
 
-Hack to really stream data from service layer into presentation layer of spring 
-applications. 
-Allows returning `Stream<T>` from repository and actually stream data into the response
-of the web layer.
+
+## Why
+
+Hack to really stream data from service layer into presentation layer of spring applications. 
+Allows returning `Stream<T>` from repository and actually stream data into the response of the web layer.
 
 Problem is that Spring Data (or JPA) closes `Steam` returned from repository as
 soon as transaction ends, so that stream must be consumed inside transaction. 
@@ -13,12 +14,12 @@ didn't quite work for me.
 Hack consists in passing Stream elements from service into the controller using a blocking queue.
 This way whole stream need not to be consumed into a list, so there is no excessive memory consumption.
 
-There are some requirements:
- - Service must accept `Queue` as a parameter.
+## How
+
+There are some things that need to be done in a certain way for this hack to work:
+ - Service must accept `Queue<T>` as a parameter.
  - Service call must be made run in a separate thread, otherwise whole stream will be consumed into a queue before queue would be read in the controller
- - Controller will use `BlockingQueueIterator` to read data from queue. Normal iterators will terminate as soon as queue
-   is empty, so to avoid this, `BlockingQueueIterator` relies on a marker object which should indicate that queue has 
-   been read completely. 
+ - Controller will use `BlockingQueueIterator` to read data from queue. Normal iterators will terminate as soon as queue is empty, so to avoid this, `BlockingQueueIterator` relies on a marker object which should indicate that queue has been read completely. 
 
 Example controller returning HTTP Service-sent event stream may look like
 
@@ -80,3 +81,24 @@ public class DataStreamService {
 Service reads stream of data from repository. `repo.getDataItems()` returns `Stream<DataItem>`. It sets up source stream
 with `StreamQ.read(Stream<T>)`, then configures marker object to indicate end of stream with `.withMarker(T)` and 
 finally instructs it to read elements from stream into queue with `.into(Queue<T>)`.
+
+## Adding it to a project
+
+For **Gradle**
+
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+...
+dependencies {
+    implementation 'com.github.uaraven:streamq:0.1.0'
+}
+```
+
+For other build tools check instructions at [jitpack](https://jitpack.io/#uaraven/streamq/0.1.0)
+
+[![](https://jitpack.io/v/uaraven/streamq.svg)](https://jitpack.io/#uaraven/streamq)
