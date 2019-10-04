@@ -101,6 +101,6 @@ dependencies {
 }
 ```
 
-For other build tools check instructions at [jitpack](https://jitpack.io/#uaraven/streamq/0.1.0)
+For other build tools check instructions at [jitpack](https://jitpack.io/#uaraven/streamq/0.1.1)
 
 [![](https://jitpack.io/v/uaraven/streamq.svg)](https://jitpack.io/#uaraven/streamq)
