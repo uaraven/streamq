@@ -41,9 +41,9 @@ public class DataStreamController {
     @GetMapping(value = "/data", produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
     Flux<DataItem> getTransactions(@RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final OffsetDateTime start,
                                    @RequestParam("end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) final OffsetDateTime end) {
-        final BlockingQueue<DataItem> dataQueue = new LinkedBlockingQueue<>();
+        final Queue<DataItem> dataQueue = StreamQ.queueWithMarker(DataItem.empty());
         executor.execute(() -> dss.getData(dataQueue, start, end));
-        return Flux.fromIterable(BlockingQueueIterable.of(dataQueue, DataItem.empty()));
+        return Flux.fromIterable(dataQueue);
     }
 
 }
@@ -51,12 +51,14 @@ public class DataStreamController {
 If you don't have async functionality already configured in your project you can just add `net.ninjacat.streamq.AsyncConfig` 
 as a configuration. It will create `AsyncTaskExecutor` bean and register it for Web MVC async support.
 
-Controller creates a queue `dataQueue` and passes it to `DataStreamService`. Call to service is made inside runnable
-passed to executor, so that it will run in separate thread. After that controller sets up Flux from 
-BlockingQueueIterable, which will start reading data from the queue as it is pushed into queue from service.
+Controller creates a queue `dataQueue` with `StreamQ.queueWithMarker(T)` and passes it to `DataStreamService`. 
+Call to service is made inside runnable passed to executor, so that it will run in separate thread. After that 
+controller sets up Flux from the queue as iterable, which will start reading data from the queue as it is pushed 
+into queue from service.
 
-`DataItem.empty()` creates a **singleton** marker object that will indicate that stream has been depleted. 
-`BlockingQueueIterator` uses reference comparison to check for the stream end, not `.equals()` method!
+`DataItem.empty()` creates a marker object **instance** that will indicate that stream has been depleted. Object 
+reference will be checked with `==` operator, not value with `.equals()` call. Because underlying `Queue<T>` can return
+`null` as indicator that it is empty, while stream may produce additional data, `null` cannot be used as marker. 
 
 Corresponding service may look like below
 ```java

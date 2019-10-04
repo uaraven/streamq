@@ -4,10 +4,22 @@ import java.util.Queue;
 import java.util.stream.Stream;
 
 /**
- * Fluent helper to facilitate copying {@link Stream} into {@link Queue}
+ * API for handling {@link Stream} copying into the {@link Queue}
  */
 public final class StreamQ {
     private StreamQ() {
+    }
+
+    /**
+     * Creates a new special kind of LinkedBlockingQueue which can be iterated until special end-of-queue marker
+     * is not put into the queue.
+     *
+     * @param marker Marker object indicating end of queue. This marker will be <strong>matched by reference</strong>
+     * @param <T>    Type of elements in the queue
+     * @return Instance of Queue&lt;T&gt;
+     */
+    public static <T> IterableQ<T> queueWithMarker(final T marker) {
+        return IterableQ.withMarker(marker);
     }
 
     /**
