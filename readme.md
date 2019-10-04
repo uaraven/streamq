@@ -3,12 +3,10 @@
 
 ## Why
 
-Hack to really stream data from service layer into presentation layer of spring applications. 
+This is an ugly(ish) hack to really stream data from service layer into presentation layer of spring applications. 
 Allows returning `Stream<T>` from repository and actually stream data into the response of the web layer.
 
-Problem is that Spring Data (or JPA) closes `Steam` returned from repository as
-soon as transaction ends, so that stream must be consumed inside transaction. 
-Theoretically transaction can be extended into the view layer, but for some reason that 
+Problem is that Spring Data (or JPA) closes `Steam` returned from repository as soon as transaction ends, so that stream must be consumed inside transaction. Theoretically transaction can be extended into the view layer, but for some reason that 
 didn't quite work for me.
 
 Hack consists in passing Stream elements from service into the controller using a blocking queue.
