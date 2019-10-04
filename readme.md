@@ -18,8 +18,8 @@ This way whole stream need not to be consumed into a list, so there is no excess
 
 There are some things that need to be done in a certain way for this hack to work:
  - Service must accept `Queue<T>` as a parameter.
- - Service call must be made run in a separate thread, otherwise whole stream will be consumed into a queue before queue would be read in the controller
- - Controller will use `BlockingQueueIterator` to read data from queue. Normal iterators will terminate as soon as queue is empty, so to avoid this, `BlockingQueueIterator` relies on a marker object which should indicate that queue has been read completely. 
+ - Service call must be made in a separate thread, otherwise whole stream will be consumed into a queue before queue would be read in the controller
+ - Controller will use iterator or stream to read data from queue. Normal iterators will terminate as soon as queue is empty, so to avoid this controller must create Queue with a call to StreamQ API. That will create special Queue, that relies on a marker object to indicate that queue has been read completely. 
 
 Example controller returning HTTP Service-sent event stream may look like
 
