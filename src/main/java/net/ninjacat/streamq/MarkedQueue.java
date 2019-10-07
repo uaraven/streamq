@@ -1,5 +1,5 @@
 /*
- * streamq: StreamProvider.java
+ * streamq: MarkedQueue.java
  *
  * Copyright 2019 Oleksiy Voronin <me@ovoronin.info>
  *
@@ -18,26 +18,20 @@
 
 package net.ninjacat.streamq;
 
-import java.util.function.IntFunction;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.concurrent.BlockingQueue;
 
-class StreamProvider<T> {
-
-    private final int size;
-    private final IntFunction<T> supplier;
-
-    StreamProvider(final int size, final IntFunction<T> supplier) {
-        this.size = size;
-        this.supplier = supplier;
-    }
-
-    Stream<T> produce() {
-        return IntStream.range(0, size).mapToObj(supplier).peek(it -> {
-            try {
-                Thread.sleep(10);
-            } catch (final InterruptedException ignored) {
-            }
-        });
-    }
+/*
+ * {@link java.util.concurrent.BlockingQueue} that provides {@link Iterator} to handle end of queue
+ * differently from standard implementation. Iterator doesn't terminate when queue is empty, it will use
+ * marker object to determine the end of queue.
+ *
+ * @param <E>
+ */
+public interface MarkedQueue<E> extends BlockingQueue<E> {
+    /**
+     * Get marker object instnace
+     *
+     * @return Marker object
+     */
+    E getMarker();
 }
