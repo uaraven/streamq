@@ -29,14 +29,14 @@ public final class StreamQ {
     }
 
     /**
-     * Creates a {@link MarkedQueue} backed with LinkedBlockedQueue which can be iterated until special end-of-queue
-     * marker is not put into the queue.
+     * Creates a {@link MarkedQueue} backed with {@link LinkedMarkedQueue} which can be iterated until special
+     * end-of-queue marker is not put into the queue.
      *
      * @param marker Marker object indicating end of queue. This marker will be <strong>matched by reference</strong>
      * @param <T>    Type of elements in the queue
      * @return Instance of Queue&lt;T&gt;
      */
-    public static <T> MarkedQueue<T> linkedWithMarker(final T marker) {
+    public static <T> MarkedQueue<T> queueWithMarker(final T marker) {
         return MarkedQ.withMarker(marker).build();
     }
 
@@ -69,8 +69,8 @@ public final class StreamQ {
          *                    find the end-of-stream
          * @return StreamReader with configured end-of-stream marker
          */
-        public TerminatingStreamReader<T> withMarker(final T endOfStream) {
-            return new TerminatingStreamReader<T>(stream, endOfStream);
+        public MarkedStreamReader<T> withMarker(final T endOfStream) {
+            return new MarkedStreamReader<T>(stream, endOfStream);
         }
     }
 
@@ -79,11 +79,11 @@ public final class StreamQ {
      *
      * @param <T> Type of objects in the stream
      */
-    public static final class TerminatingStreamReader<T> {
+    public static final class MarkedStreamReader<T> {
         private final Stream<T> stream;
         private final T endOfStream;
 
-        TerminatingStreamReader(final Stream<T> stream, final T endOfStream) {
+        MarkedStreamReader(final Stream<T> stream, final T endOfStream) {
             this.stream = stream;
             this.endOfStream = endOfStream;
         }
