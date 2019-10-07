@@ -1,3 +1,21 @@
+/*
+ * streamq: StreamQ.java
+ *
+ * Copyright 2019 Oleksiy Voronin <me@ovoronin.info>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.ninjacat.streamq;
 
 import java.util.Queue;
@@ -11,15 +29,15 @@ public final class StreamQ {
     }
 
     /**
-     * Creates a new special kind of LinkedBlockingQueue which can be iterated until special end-of-queue marker
-     * is not put into the queue.
+     * Creates a {@link MarkedQueue} backed with LinkedBlockedQueue which can be iterated until special end-of-queue
+     * marker is not put into the queue.
      *
      * @param marker Marker object indicating end of queue. This marker will be <strong>matched by reference</strong>
      * @param <T>    Type of elements in the queue
      * @return Instance of Queue&lt;T&gt;
      */
-    public static <T> IterableQ<T> queueWithMarker(final T marker) {
-        return IterableQ.withMarker(marker);
+    public static <T> MarkedQueue<T> linkedWithMarker(final T marker) {
+        return MarkedQ.withMarker(marker).build();
     }
 
     /**
@@ -47,7 +65,7 @@ public final class StreamQ {
          * Sets end-of-stream marker object for this reader.
          *
          * @param endOfStream Object to indicate end-of-stream. This should be a singleton object,
-         *                    as {@link BlockingQueueIterator} will use reference comparision to
+         *                    as {@link MarkedQueueIterator} will use reference comparision to
          *                    find the end-of-stream
          * @return StreamReader with configured end-of-stream marker
          */
