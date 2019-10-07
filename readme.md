@@ -95,10 +95,10 @@ allprojects {
 }
 ...
 dependencies {
-    implementation 'com.github.uaraven:streamq:0.1.0'
+    implementation 'com.github.uaraven:streamq:0.2.1'
 }
 ```
 
-For other build tools check instructions at [jitpack](https://jitpack.io/#uaraven/streamq/0.1.1)
+For other build tools check instructions at [jitpack](https://jitpack.io/#uaraven/streamq/0.2.1)
 
 [![](https://jitpack.io/v/uaraven/streamq.svg)](https://jitpack.io/#uaraven/streamq)
