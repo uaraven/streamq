@@ -57,7 +57,7 @@ public final class MarkedQ<E> {
         }
         this.marker = marker;
         this.queueType = QueueType.LINKED;
-        this.capacity = Integer.MAX_VALUE;
+        this.capacity = 16;
     }
 
     public MarkedQ<E> linked() {
